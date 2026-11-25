@@ -1,0 +1,6 @@
+title: Album Artist Separator Formatter
+script_language_version: '1.1'
+script: |
+  $noop(Join album artist names with an ampersand and preserve track artist formatting.)
+  $if(%albumartist%,$set(albumartist,$rreplace($join(%albumartist%,; ),\\s*;\\s*, & )))
+id: 2a7c3cce-9c36-4366-8d28-ec8626443d4e

@@ -1,0 +1,22 @@
+title: Album Edition/Release in Album Title
+script_language_version: '1.1'
+script: |
+  $noop(Format the final parenthesized subtitle without changing the main album title.)
+  $if(%album%,
+  $set(_acc_existing,$rsearch(%album%,\\\(\([^\(\)]*\)\\\)\$))
+  $if(%_acc_existing%,
+  $set(_acc_formatted,$if($eq(%_acc_existing%,$upper(%_acc_existing%)),$title($lower(%_acc_existing%)),$title(%_acc_existing%)))
+  $set(album,$rreplace(%album%,\\s*\\\([^\(\)]*\\\)\$,) \(%_acc_formatted%\))
+  )
+  $noop(Use the matched release disambiguation as the edition subtitle.)
+  $set(_acc_edition,$trim(%_releasecomment%))
+  $if(%_acc_edition%,
+  $set(_acc_edition,$if($eq(%_acc_edition%,$upper(%_acc_edition%)),$title($lower(%_acc_edition%)),$title(%_acc_edition%)))
+  $noop(Avoid adding a subtitle that already exists in parentheses.)
+  $if($not($in($lower(%album%),$lower(\(%_acc_edition%\)))),$set(album,%album% \(%_acc_edition%\)))
+  )
+  )
+  $unset(_acc_existing)
+  $unset(_acc_formatted)
+  $unset(_acc_edition)
+id: b3847866-587c-4207-b307-4d19abb49fe3

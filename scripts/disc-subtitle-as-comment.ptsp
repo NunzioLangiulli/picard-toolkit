@@ -1,0 +1,14 @@
+title: Disc Subtitle as Comment
+script_language_version: '1.1'
+script: |
+  $noop(Get the disc subtitle from the tag or the Keep Only Tags variable)
+  $set(_disc_name,$if2(%discsubtitle%,%_ko_discsubtitle%))
+
+  $noop(Copy the disc subtitle to comment for multi-disc albums)
+  $if($and($gt(%totaldiscs%,1),%_disc_name%),
+      $set(comment,%_disc_name%)
+  )
+
+  $noop(Remove the disc subtitle tag after using it)
+  $unset(discsubtitle)
+id: cbdf6e1c-06c7-4653-a2fa-f35bdf845770

@@ -1,0 +1,11 @@
+title: Title Smart Capitalize
+script_language_version: '1.1'
+script: |
+  $noop(Convert all-uppercase titles to title case; otherwise preserve existing uppercase letters)
+  $if(%title%,
+      $if($eq(%title%,$upper(%title%)),
+          $set(title,$title($lower(%title%))),
+          $set(title,$title(%title%))
+      )
+  )
+id: ee4a7013-8a9d-4bbc-9888-85c2af38f248

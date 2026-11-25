@@ -1,0 +1,7 @@
+title: Album Smart Capitalize
+script_language_version: '1.1'
+script: |
+  $noop(Capitalize the album title while preserving acronyms in mixed-case titles.)
+  $noop(Entirely uppercase titles are lowercased before capitalization.)
+  $if(%album%,$set(album,$if($eq(%album%,$upper(%album%)),$title($lower(%album%)),$title(%album%))))
+id: 2d89a9fb-d210-4b3d-a470-0a08affeed81

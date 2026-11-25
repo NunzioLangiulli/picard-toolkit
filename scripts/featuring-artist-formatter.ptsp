@@ -1,0 +1,64 @@
+title: Featuring Artist Formatter
+script_language_version: '1.1'
+script: |
+  $noop(Read album artists from the tag or the Keep Only Tags variable)
+  $if(%albumartists%,
+  $copy(albumartist,albumartists),
+  $if(%_ko_albumartists%,
+  $copy(albumartist,_ko_albumartists)
+  )
+  )
+  $noop(Read track artists; fall back to artist and then albumartist)
+  $set(_names,$if2(%artists%,%_ko_artists%,%artist%,%albumartist%))
+  $noop(Keep the original file title available for the fallback only)
+  $set(_old_title,$get_original(title))
+  $noop(Extract featured artists from the title before removing them)
+  $set(_feat_pattern,\(?i\)\\s+[\(]?\(?:feat\\.?|ft\\.?|featuring\)\\s+[^\(\)]+[\)]?)
+  $set(_feat_match,$rsearch(%title%,%_feat_pattern%))
+  $set(_has_new_feat,$or(%_feat_match%,$rsearch(%_names%,%_feat_pattern%)))
+  $while(%_feat_match%,
+  $set(_guest,$rreplace(%_feat_match%,\(?i\)^\\s+[\(]?\(?:feat\\.?|ft\\.?|featuring\)\\s+,))
+  $set(_guest,$trim($rreplace(%_guest%,[\)]\$,)))
+  $set(_names,%_names%; %_guest%)
+  $set(title,$trim($replace(%title%,%_feat_match%,)))
+  $set(_feat_match,$rsearch(%title%,%_feat_pattern%))
+  )
+  $noop(Convert featuring expressions in artist tags into separators)
+  $set(_names,$rreplace(%_names%,\(?i\)\\s*[\(]\(?:feat\\.?|ft\\.?|featuring\)\\s+\([^\)]*\)[\)],; \\1))
+  $set(_names,$rreplace(%_names%,\(?i\)\\s+\(?:feat\\.?|ft\\.?|featuring\)\\s+,; ))
+  $noop(Split artist names; trim whitespace and remove duplicates)
+  $unset(_result)
+  $foreach(%_names%,
+  $set(_one,$trim(%_loop_value%))
+  $if(%_one%,$copymerge(_result,_one))
+  ,;)
+  $noop(Recover original-title guests only when new credits do not already identify guests)
+  $if($and($not(%_has_new_feat%),$or($lte($lenmulti(%_result%),1),$eq($lower($join(%_result%,; )),$lower($join(%albumartist%,; ))))),
+  $set(_feat_match,$rsearch(%_old_title%,%_feat_pattern%))
+  $while(%_feat_match%,
+  $set(_guest,$rreplace(%_feat_match%,\(?i\)^\\s+[\(]?\(?:feat\\.?|ft\\.?|featuring\)\\s+,))
+  $set(_guest,$trim($rreplace(%_guest%,[\)]\$,)))
+  $foreach(%_guest%,
+  $set(_one,$trim(%_loop_value%))
+  $if(%_one%,$copymerge(_result,_one))
+  ,;)
+  $set(_old_title,$replace(%_old_title%,%_feat_match%,))
+  $set(_feat_match,$rsearch(%_old_title%,%_feat_pattern%))
+  )
+  )
+  $noop(Store the merged artist list in artist)
+  $copy(artist,_result)
+  $noop(Remove plural artist tags after using their contents)
+  $unset(artists)
+  $unset(albumartists)
+
+  $noop(Remove temporary script variables)
+  $unset(_names)
+  $unset(_feat_pattern)
+  $unset(_feat_match)
+  $unset(_guest)
+  $unset(_result)
+  $unset(_one)
+  $unset(_old_title)
+  $unset(_has_new_feat)
+id: 51253688-165a-4373-8c5b-a7035e7f0f72

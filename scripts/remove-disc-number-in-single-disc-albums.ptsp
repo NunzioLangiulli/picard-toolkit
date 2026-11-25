@@ -1,0 +1,8 @@
+title: Remove Disc Number In Single Disk Albums
+script_language_version: '1.1'
+script: |
+  $if($eq(%totaldiscs%,1),
+      $unset(discnumber)
+      $unset(totaldiscs)
+  )
+id: d8b92e99-1e1b-4bfa-8972-6af28e1c3daf
