@@ -1,4 +1,4 @@
-# Borunzio's Picard Toolkit
+# MusicBrainz Picard Toolkit
 
 Importable tagging scripts and a directory of independent plugins for MusicBrainz Picard: consistent artist credits, clean titles, album editions, disc metadata, genres and cover-art comparison.
 
